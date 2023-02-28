@@ -37,37 +37,50 @@ def updateScreen():
 
 # Check special space with walking
 def specialCheckWalk(turn):
-    
+    updateScreen()
     if walkPos[turn] == 8: # check if at space 8
-        updateScreen()
+        extraX, extraY = baseExtra[turn]
+        player_x = 65 + extraX
+        player_y = 820 + extraY
+        screen.blit(characterImages[turn], (player_x, player_y))
+        pygame.display.flip()
+
+    elif walkPos[turn] == 16: # check if at space 16
         extraX, extraY = baseExtra[turn]
         player_x = 65 + extraX
         player_y = 30 + extraY
         screen.blit(characterImages[turn], (player_x, player_y))
         pygame.display.flip()
-    
-    elif walkPos[turn] == 16: # check at space 16
-        updateScreen()
-        extraX, extraY = baseExtra[turn]
-        player_x = 65 + extraX
-        player_y = 30 + extraY
-        screen.blit(characterImages[turn], (player_x, player_y))
-        pygame.display.flip()
-        starbuy = easygui.ynbox(f"Do you want to buy a star player {turn + 1}?", "You found a star!", ["Yes", "No"])
+        Shop = easygui.ynbox(f"Welcome to the shop! \nDo you want to buy anything {turn + 1}?", "Standard shop", ["Yes", "No"])
+        if Shop == True:
+            options = random.sample(shop1, 3)
+            option1, = options[0].keys()
+            option2, = options[1].keys()
+            option3, = options[2].keys()
+            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? {turn + 1}?", "Standard shop", [option1, option2, option3])
+            for item in shop1:
+                if bought in item:
+                    selected_item = item[bought]
+                    selected_item = list(selected_item)
+                    break
+            for i in range(len(selected_item)):
+                inv[turn][i] += selected_item[i]
 
     elif walkPos[turn] == 24: # check if at space 24
-        updateScreen()
         extraX, extraY = baseExtra[turn]
-        player_x = 65 + extraX
+        player_x = 855 + extraX
         player_y = 30 + extraY
         screen.blit(characterImages[turn], (player_x, player_y))
         pygame.display.flip()
+        if day == True:
+            easygui.msgbox(f"Congratulations! You won [AMOUNT] gold!", "YOU FOUND GOLD!")
+        else:
+            easygui.msgbox(f"Oh no you have been robbed, they took [AMOUNT] gold!", "YOU GOT ROBBED!")
     
     elif walkPos[turn] == 32: # check if at space 32
-        updateScreen()
         extraX, extraY = baseExtra[turn]
-        player_x = 65 + extraX
-        player_y = 30 + extraY
+        player_x = 855 + extraX
+        player_y = 820 + extraY
         screen.blit(characterImages[turn], (player_x, player_y))
         pygame.display.flip()
     pygame.event.clear()
@@ -145,11 +158,15 @@ characterImages = [character1, character2, character3, character4, character5, c
 # Character distribution
 baseExtra = [(0,5),(37,5),(0,42),(37,42),(0,79),(37,79),(0,116),(37,116)]
 
-# Items/inventory
-inv = [[],[],[],[],[],[],[],[]]
+# Items/inventory (First digit = Attack damage, second = Magic damage, third = armor and fourth = magic shield)
+inv = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
 
 # Check movement
 walking = False
+
+# Shop items
+shop1 = [{"Basic sword": (2,0,0,0)}, {"Basic wand": (0,2,0,0)}, {"Basic armor": (0,0,2,0)}, {"Basic magic shield": (0,0,0,2)}]
+shop2 = [{"Epic sword": (5,0,0,0)}, {"Epic wand": (0,5,0,0)}, {"Epic armor": (0,0,5,0)}, {"Epic magic shield": (0,0,0,5)}]
 
 #----- Start menu -----#
 
@@ -186,67 +203,64 @@ if not done:
 
 while not done:
     
-    if rounds < 10:
+    # if rounds < 10: (is for later)
 
-        #--- Check activities (mouseclicks, button presses etc.) ---#
+    #--- Check activities (mouseclicks, button presses etc.) ---#
 
-        if day == True:
-            board = boardDay
-            timeColor = 255,255,255
-        else:
-            board = boardNight
-            timeColor = 0,0,0
-            
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            elif event.type == pygame.KEYDOWN:
-                # Execute keypress
-                if event.key == pygame.K_SPACE:
-                    throw = random.randint(1,6)
-                    if throw > 0:
-                        walking = True
-                    position[turn] += throw
+    if day == True:
+        board = boardDay
+        timeColor = 255,255,255
+    else:
+        board = boardNight
+        timeColor = 0,0,0
+        
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.KEYDOWN:
+            # Execute keypress
+            if event.key == pygame.K_SPACE:
+                throw = random.randint(1,6)
+                if throw > 0:
+                    walking = True
+                position[turn] += throw
 
-                    if position[turn] > 31:
-                        position[turn] -= 32               
+                if position[turn] > 31:
+                    position[turn] -= 32               
 
-                elif event.key == pygame.K_e:
-                    powerupturn = inv[turn]
-                    powerup = easygui.buttonbox(f"What powerup do you want to use player {turn + 1}?", "Powerups", powerupturn)
-                    pygame.event.clear()
-
-        #--- Draw/update graphics ---#
-
-        if walking != True:
-            updateScreen()
-        else:
-            for i in range(throw):
-                walkPos[turn] += 1
-                if walkPos[turn] > 31:
-                    walkPos[turn] -= 32  
-                specialCheckWalk(turn)
+            elif event.key == pygame.K_e:
+                powerupturn = inv[turn]
+                powerup = easygui.buttonbox(f"What powerup do you want to use player {turn + 1}?", "Powerups", powerupturn)
                 pygame.event.clear()
 
-                updateScreen()
-                pygame.display.flip()
-                time.sleep(0.2)
-            walking = False
-            specialCheckPos(turn)
-            pygame.event.clear()
-            
-            # Switch turns
-            if turn < (players - 1):
-                turn += 1
-            else:
-                turn = 0
-                rounds += 1
-                if day == True:
-                    day = False
-                    easygui.msgbox(f"Its getting dark outside...", "Whats happening?")
-                else:
-                    day = True
-                    easygui.msgbox(f"Whats that light?", "Whats happening?")
+    #--- Draw/update graphics ---#
+
+    if walking != True:
+        updateScreen()
+    else:
+        for i in range(throw):
+            walkPos[turn] += 1
+            if walkPos[turn] > 31:
+                walkPos[turn] -= 32  
+            specialCheckWalk(turn)
+            updateScreen()
+            pygame.display.flip()
+            time.sleep(0.2)
+        walking = False
+        specialCheckPos(turn)
+        
+        # Switch turns
+        if turn < (players - 1):
+            turn += 1
+        else:
+            turn = 0
+            rounds += 1
+            # if day == True:
+            #     day = False
+            #     easygui.msgbox(f"Its getting dark outside...", "Whats happening?")
+            # else:
+            #     day = True
+            #     easygui.msgbox(f"Whats that light?", "Whats happening?")
     
 
     # Draw text
@@ -261,8 +275,8 @@ while not done:
     # screen.blit(label, (X,Y))
 
     # Refresh screen
-    else:
-        "Fight"
+    # else:
+    #     "Fight"
 
     updateScreen()
     clock.tick(60)
