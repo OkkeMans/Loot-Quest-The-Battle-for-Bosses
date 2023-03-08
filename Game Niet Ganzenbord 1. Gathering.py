@@ -34,6 +34,22 @@ def updateScreen():
         player_x = spaces[walkPos[i]][0] + extraX
         player_y = spaces[walkPos[i]][1] + extraY
         screen.blit(characterImages[i], (player_x, player_y))
+    
+    # Draw text
+    font = pygame.font.Font("LuckiestGuy-Regular.ttf", 50)
+    # Show last throw
+    # text = (f"Last throw: {throw}")
+    # label = font.render(text,True,(textColor))
+    # screen.blit(label,(200,200))
+    highlight = pygame.Surface((600,55))
+    highlight.set_alpha(30)
+    highlight.fill((highlighColor))
+    screen.blit(highlight, ((highlightCords[turn])))
+    
+    for i in range (players):
+        text = (f"Player {i + 1} | {inv[i]} | {gold[i]}")
+        label = font.render(text,True,(textColor))
+        screen.blit(label,(leaderboardCords[i]))
 
 # Check special space with walking
 def specialCheckWalk(turn):
@@ -51,13 +67,13 @@ def specialCheckWalk(turn):
         player_y = 30 + extraY
         screen.blit(characterImages[turn], (player_x, player_y))
         pygame.display.flip()
-        Shop = easygui.ynbox(f"Welcome to the shop! \nDo you want to buy anything {turn + 1}?", "Standard shop", ["Yes", "No"])
-        if Shop == True:
+        buyShop = easygui.ynbox(f"Welcome to the shop! \nDo you want to buy something or make some money player {turn + 1}?", "Standard shop", ["Buy something", "Make money"])
+        if buyShop == True:
             options = random.sample(shop1, 3)
             option1, = options[0].keys()
             option2, = options[1].keys()
             option3, = options[2].keys()
-            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? {turn + 1}?", "Standard shop", [option1, option2, option3])
+            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "Standard shop", [option1, option2, option3])
             for item in shop1:
                 if bought in item:
                     selected_item = item[bought]
@@ -65,6 +81,8 @@ def specialCheckWalk(turn):
                     break
             for i in range(len(selected_item)):
                 inv[turn][i] += selected_item[i]
+        if buyShop == False:
+            easygui.msgbox(f"[how to earn money]", "Money")
 
     elif walkPos[turn] == 24: # check if at space 24
         extraX, extraY = baseExtra[turn]
@@ -76,6 +94,8 @@ def specialCheckWalk(turn):
             easygui.msgbox(f"Congratulations! You won [AMOUNT] gold!", "YOU FOUND GOLD!")
         else:
             easygui.msgbox(f"Oh no you have been robbed, they took [AMOUNT] gold!", "YOU GOT ROBBED!")
+        pygame.event.clear()
+        
     
     elif walkPos[turn] == 32: # check if at space 32
         extraX, extraY = baseExtra[turn]
@@ -87,14 +107,42 @@ def specialCheckWalk(turn):
 
 # Check special space with final pos
 def specialCheckPos(turn):
-    if position[turn] == 4 or position[turn] == 12 or position[turn] == 20 or position[turn] == 28 and 1 in inv[turn]:
-        travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "Travel the world", ["Yes", "No"])
-        if travel == True:
-            travelLocation = easygui.buttonbox("Where do you want to travel?", "Travel location", list(locations))
-            walkPos[turn] = locations[travelLocation]
-            position[turn] = locations[travelLocation]
-            updateScreen()
-            pygame.display.flip()
+    if position[turn] in shopSpace:
+        buyShop = easygui.ynbox(f"Welcome to the shop! \nDo you want to buy something or make some money player {turn + 1}?", "[WHAT KIND OF] shop", ["Buy something", "Make money"])
+        if buyShop == True:
+            options = random.sample(shop2, 3)
+            option1, = options[0].keys()
+            option2, = options[1].keys()
+            option3, = options[2].keys()
+            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "[WHAT KIND OF] shop", [option1, option2, option3])
+            for item in shop2:
+                if bought in item:
+                    selected_item = item[bought]
+                    selected_item = list(selected_item)
+                    break
+            for i in range(len(selected_item)):
+                inv[turn][i] += selected_item[i]
+        if buyShop == False:
+            easygui.msgbox(f"[how to earn money]", "Money")
+
+
+    if position[turn] in clueSpace:
+        buyClue = easygui.ynbox(f"Do you want to buy a clue player {turn + 1}?", "Buy a clue?", ["Yes", "No"])
+        if buyClue == True:
+            message = clues[random.choice([DamageType, ShieldType])]
+            easygui.msgbox(message, "Your special clue")
+
+    if position[turn] in stationSpace:
+        if firstLap == True:
+            travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "Travel the world", ["Yes", "No"])
+            if travel == True:
+                travelLocation = easygui.buttonbox("Where do you want to travel?", "Travel location", list(locations))
+                walkPos[turn] = locations[travelLocation]
+                position[turn] = locations[travelLocation]
+                updateScreen()
+                pygame.display.flip()
+        else:
+            easygui.msgbox("The train has not not arrived yet", "An empty station")
 
     pygame.event.clear()
             
@@ -114,6 +162,13 @@ spaces = [[820,820],
 [820,30],
 [820,190],[820,280],[820,370],[820,460],[820,548],[820,638],[820,725]]
 
+# Special spaces
+shopSpace = [1,3,6,9,13,15,18,21,23,25,26,29]
+clueSpace = [2,10,17,30]
+stationSpace = [4,12,20,28]
+goldSpace = [5,11,14,19,27,31]
+stealSpace = [7,22]
+
 # Character positions
 position = [0,0,0,0,0,0,0,0]
 walkPos = [0,0,0,0,0,0,0,0]
@@ -130,8 +185,13 @@ throw = 0
 # Day/night
 day = True
 
+# Has someone made a full lap yet?
+firstLap = False
+
 # Background fill
-timeColor = 255,255,255
+timeColor = 200,180,160
+textColor = 65,60,50
+highlighColor = 0,0,0
 
 # Travel locations
 locations = {"Station 1": 4,"Station 2": 12,"Station 3": 20,"Station 4": 28,}
@@ -164,9 +224,38 @@ inv = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,
 # Check movement
 walking = False
 
+# Player gold
+gold = [0,0,0,0,0,0,0,0]
+
 # Shop items
-shop1 = [{"Basic sword": (2,0,0,0)}, {"Basic wand": (0,2,0,0)}, {"Basic armor": (0,0,2,0)}, {"Basic magic shield": (0,0,0,2)}]
-shop2 = [{"Epic sword": (5,0,0,0)}, {"Epic wand": (0,5,0,0)}, {"Epic armor": (0,0,5,0)}, {"Epic magic shield": (0,0,0,5)}]
+shop1 = [{"Basic sword": (3,0,0,0)}, {"Basic wand": (0,3,0,0)}, {"Basic armor": (0,0,2,0)}, {"Basic magic shield": (0,0,0,2)}]
+shop2 = [{"Epic sword": (7,0,0,0)}, {"Epic wand": (0,7,0,0)}, {"Epic armor": (0,0,5,0)}, {"Epic magic shield": (0,0,0,5)}]
+shop3 = [{"Legendary sword": (12,0,0,0)}, {"Legendary wand": (0,12,0,0)}, {"Legendary armor": (0,0,8,0)}, {"Legendary magic shield": (0,0,0,8)}]
+
+# Boss clues
+clues = {
+    "AD": "The boss deals Attack Damage",
+    "MD": "The boss deals Magic Damage",
+    "AP": "The boss has Attack Protection",
+    "MP": "The boss has Magic Protection"
+}
+
+# Boss decide
+DamageType = random.choice(["AD","MD"])
+ShieldType = random.choice(["AP","MP"])
+
+# Formulas
+# playerDamage = (player attack damage - boss armor) + (player magic damage - boss magic protection)
+# bossDamage = (boss attack damage - player armor) + (boss magic damage - player magic protection)
+# playerHealth -= bossDamage
+
+# Leaderboard player cords
+leaderboardCords = [(205, 205), (205, 282.5), (205, 360), (205, 437.5), (205, 515), (205, 592.5), (205, 670), (205, 747.5)]
+
+# The cords for where the higlight should be
+highlightCords = [(200, 200), (200, 277.5), (200, 355), (200, 432.5), (200, 510), (200, 587.5), (200, 665), (200, 742.5)]
+
+# Opacity of the highlight
 
 #----- Start menu -----#
 
@@ -203,81 +292,79 @@ if not done:
 
 while not done:
     
-    # if rounds < 10: (is for later)
+    if rounds < 3:
 
     #--- Check activities (mouseclicks, button presses etc.) ---#
 
-    if day == True:
-        board = boardDay
-        timeColor = 255,255,255
-    else:
-        board = boardNight
-        timeColor = 0,0,0
-        
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        elif event.type == pygame.KEYDOWN:
-            # Execute keypress
-            if event.key == pygame.K_SPACE:
-                throw = random.randint(1,6)
-                if throw > 0:
-                    walking = True
-                position[turn] += throw
+        if day == True:
+            board = boardDay
+            timeColor = 200,180,160
+            textColor = 65,60,50
+            highlighColor = 0,0,0
 
-                if position[turn] > 31:
-                    position[turn] -= 32               
-
-            elif event.key == pygame.K_e:
-                powerupturn = inv[turn]
-                powerup = easygui.buttonbox(f"What powerup do you want to use player {turn + 1}?", "Powerups", powerupturn)
-                pygame.event.clear()
-
-    #--- Draw/update graphics ---#
-
-    if walking != True:
-        updateScreen()
-    else:
-        for i in range(throw):
-            walkPos[turn] += 1
-            if walkPos[turn] > 31:
-                walkPos[turn] -= 32  
-            specialCheckWalk(turn)
-            updateScreen()
-            pygame.display.flip()
-            time.sleep(0.2)
-        walking = False
-        specialCheckPos(turn)
-        
-        # Switch turns
-        if turn < (players - 1):
-            turn += 1
         else:
-            turn = 0
-            rounds += 1
-            # if day == True:
-            #     day = False
-            #     easygui.msgbox(f"Its getting dark outside...", "Whats happening?")
-            # else:
-            #     day = True
-            #     easygui.msgbox(f"Whats that light?", "Whats happening?")
+            board = boardNight
+            timeColor = 45,40,35
+            textColor = 200,175,150
+            highlighColor = 255,255,255
+            
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            elif event.type == pygame.KEYDOWN:
+                # Execute keypress
+                if event.key == pygame.K_SPACE:
+                    throw = random.randint(1,6)
+                    if throw > 0:
+                        walking = True
+                    position[turn] += throw
+
+                    if position[turn] > 31:
+                        position[turn] -= 32      
+                    if not firstLap == True:
+                        firstLap == True      
+
+                elif event.key == pygame.K_e:
+                    powerupturn = inv[turn]
+                    powerup = easygui.msgbox(f"You have {str(inv[turn][0])} attack damge, {str(inv[turn][1])} magic damage, {str(inv[turn][2])} armor and {str(inv[turn][3])} magic protection.", "Stats")
+                    pygame.event.clear()
+
+        #--- Draw/update graphics ---#
+
+        if walking != True:
+            updateScreen()
+        else:
+            for i in range(throw):
+                walkPos[turn] += 1
+                if walkPos[turn] > 31:
+                    walkPos[turn] -= 32  
+                specialCheckWalk(turn)
+                updateScreen()
+                pygame.display.flip()
+                time.sleep(0.2)
+            walking = False
+            specialCheckPos(turn)
+            
+            # Switch turns
+            if turn < (players - 1):
+                turn += 1
+            else:
+                turn = 0
+                rounds += 1
+                if day == True:
+                    day = False
+                    easygui.msgbox(f"Its getting dark outside...", "Whats happening?")
+                else:
+                    day = True
+                    easygui.msgbox(f"Whats that light?", "Whats happening?")
+                pygame.event.clear()
     
-
-    # Draw text
-    # font = pygame.font.Font("SuperMario256.ttf", 30)
-    # Show last throw
-    # TODO: Do you want this in your game   ?
-
-    # Show current player
-    # text = (f"Current player {turn}")
-    # label = font.render(text,1,(0,0,0))
-    # #FIXME:
-    # screen.blit(label, (X,Y))
+    else:
+        for i in range(players):
+            print(inv[i])
+            done = True
 
     # Refresh screen
-    # else:
-    #     "Fight"
-
     updateScreen()
     clock.tick(60)
     pygame.display.flip()
