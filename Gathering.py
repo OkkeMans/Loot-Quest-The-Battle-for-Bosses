@@ -104,7 +104,7 @@ gamblerOptions = ["You recieve an epic sword",
 "Your skip your next turn"]
 
 # Does the player have a train ticket?
-trainTicket = [True,False,False,True,True,False,True,False]
+trainTicket = [False,False,False,False,False,False,False,False]
 
 # Can this player choose their next throw?
 chooseThrow = [False,False,False,False,False,False,False,False]

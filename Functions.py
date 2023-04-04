@@ -179,6 +179,7 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
             if gold[turn] >= 1000:
                 message = clues[random.choice([damageType, shieldType])]
                 gold[turn] -= 1000
+                easygui.msgbox("Make sure nobody is looking!", "Your special clue", "Continue")
                 easygui.msgbox(message, "Your special clue", "Continue")
             else:
                 easygui.msgbox("You dont have enough gold to buy a clue", "L", "Continue")
