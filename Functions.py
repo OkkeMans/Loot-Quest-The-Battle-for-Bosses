@@ -68,7 +68,7 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, first
     if walkPos[turn] == 8: # check if at space 8
         gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "The gambler", ["Yes", "No"])
         if gambling:
-            message = random.randint(0,9)
+            message = 9
             easygui.msgbox(gamblerOptions[message])
             if message == 0:
                 inv[turn][0] += 7
@@ -192,7 +192,7 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
                 if buyTicket and gold[turn] >= 750:
                     gold[turn] -= 750
                     trainTicket[turn] = True
-                elif gold[turn] < 750:
+                elif buyTicket and gold[turn] < 750:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
                 travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "Travel the world", ["Yes", "No"])
@@ -206,7 +206,7 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
                 if buyTicket and gold[turn] >= 750:
                     gold[turn] -= 750
                     trainTicket[turn] = True
-                elif gold[turn] < 750:
+                elif buyTicket and gold[turn] < 750:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
                 easygui.msgbox("The train has not not arrived yet", "An empty station", "Continue")

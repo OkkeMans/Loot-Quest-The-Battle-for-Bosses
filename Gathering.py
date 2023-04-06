@@ -116,7 +116,7 @@ gambleSkip = [False,False,False,False,False,False,False,False]
 gold = [0,0,0,0,0,0,0,0]
 
 # Shop items
-shop1 = [{"Basic sword": [(3,0,0,0), 250]}, {"Basic wand": [(0,3,0,0), 250]}, {"Basic armor": [(0,0,2,0), 200]}, {"Basic magic shield": [(0,0,2,0), 200]}]
+shop1 = [{"Basic sword": [(3,0,0,0), 250]}, {"Basic wand": [(0,3,0,0), 250]}, {"Basic armor": [(0,0,2,0), 200]}, {"Basic magic shield": [(0,0,0,2), 200]}]
 shop2 = [{"Epic sword": [(7,0,0,0), 600]}, {"Epic wand": [(0,7,0,0), 600]}, {"Epic armor": [(0,0,5,0), 450]}, {"Epic magic shield": [(0,0,0,5), 450]}]
 shop3 = [{"Legendary sword": [(13,0,0,0), 1200]}, {"Legendary wand": [(0,13,0,0), 1200]}, {"Legendary armor": [(0,0,8,0), 750]}, {"Legendary magic shield": [(0,0,0,8), 750]}]
 
@@ -222,13 +222,12 @@ while not done:
                     if not chooseThrow[turn]:
                         throw = random.randint(1,6) + random.randint(1,6)
                     else:
-                        easygui.integerbox("Choose what you want your next throw to be", "CHOOSE YOUR THROW", None, 1, 12)
+                        throw = easygui.integerbox("Choose what you want your next throw to be", "CHOOSE YOUR THROW", None, 1, 12)
                     walking = True
                     position[turn] += throw
 
                     if position[turn] > 31:
-                        position[turn] -= 32
-                        firstLap = False      
+                        position[turn] -= 32     
 
                 elif event.key == pygame.K_e:
                     easygui.msgbox(f"You have {str(inv[turn][0])} attack damge, {str(inv[turn][1])} magic damage, {str(inv[turn][2])} armor and {str(inv[turn][3])} magic protection.", "Stats", "BACK TO BOARD")
@@ -245,6 +244,7 @@ while not done:
                 walkPos[turn] += 1
                 if walkPos[turn] > 31:
                     walkPos[turn] -= 32
+                    firstLap = False 
                 pygame.mixer.Sound.play(walkSound)  
                 updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
                 updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
@@ -282,12 +282,14 @@ while not done:
                 rounds += 1
                 if day:
                     day = False
-                    easygui.msgbox("Its getting dark outside...", "Whats happening?", "Continue")
+                    if firstLap:
+                        easygui.msgbox("Its getting dark outside...", "Whats happening?", "Continue")
                 else:
                     day = True
-                    easygui.msgbox("Whats that light?", "Whats happening?", "Continue")
+                    if firstLap:
+                        easygui.msgbox("Whats that light?", "Whats happening?", "Continue")
                     
-            while turn in skippedTurns or gambleSkip[turn]:
+            while gambleSkip[turn] or turn in skippedTurns:
                 if turn < players - 1:
                     turn += 1
                 else:
