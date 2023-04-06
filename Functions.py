@@ -68,7 +68,7 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, first
     if walkPos[turn] == 8: # check if at space 8
         gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "The gambler", ["Yes", "No"])
         if gambling:
-            message = 9
+            message = random.randint(0,9)
             easygui.msgbox(gamblerOptions[message])
             if message == 0:
                 inv[turn][0] += 7
