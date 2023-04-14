@@ -101,7 +101,8 @@ gamblerOptions = ["You recieve an epic sword",
 "Your Attack damage and Magic damage switch values",
 "Your Armor and Magic protection switch values",
 "You can choose your next throw value",
-"Your skip your next turn"]
+"Your skip your next turn",
+"Your next visit to the epic shop will grant you access to the legendary shop"]
 
 # Does the player have a train ticket?
 trainTicket = [False,False,False,False,False,False,False,False]
@@ -112,13 +113,16 @@ chooseThrow = [False,False,False,False,False,False,False,False]
 # Does this player skip their next turn?
 gambleSkip = [False,False,False,False,False,False,False,False]
 
+# Does this player have access to the legendary shop next time they pass it?
+legendaryAccess = [False,False,False,False,False,False,False,False]
+
 # Player gold
 gold = [0,0,0,0,0,0,0,0]
 
 # Shop items
-shop1 = [{"Basic sword": [(3,0,0,0), 250]}, {"Basic wand": [(0,3,0,0), 250]}, {"Basic armor": [(0,0,2,0), 200]}, {"Basic magic shield": [(0,0,0,2), 200]}]
-shop2 = [{"Epic sword": [(7,0,0,0), 600]}, {"Epic wand": [(0,7,0,0), 600]}, {"Epic armor": [(0,0,5,0), 450]}, {"Epic magic shield": [(0,0,0,5), 450]}]
-shop3 = [{"Legendary sword": [(13,0,0,0), 1200]}, {"Legendary wand": [(0,13,0,0), 1200]}, {"Legendary armor": [(0,0,8,0), 750]}, {"Legendary magic shield": [(0,0,0,8), 750]}]
+shopB = [{"Basic sword": [(3,0,0,0), 250]}, {"Basic wand": [(0,3,0,0), 250]}, {"Basic armor": [(0,0,2,0), 200]}, {"Basic magic shield": [(0,0,0,2), 200]}]
+shopE = [{"Epic sword": [(7,0,0,0), 550]}, {"Epic wand": [(0,7,0,0), 600]}, {"Epic armor": [(0,0,5,0), 450]}, {"Epic magic shield": [(0,0,0,5), 450]}]
+shopL = [{"Legendary sword": [(13,0,0,0), 1000]}, {"Legendary wand": [(0,13,0,0), 1200]}, {"Legendary armor": [(0,0,9,0), 750]}, {"Legendary magic shield": [(0,0,0,9), 750]}]
 
 # Boss clues
 clues = {
@@ -129,16 +133,18 @@ clues = {
 }
 
 # Boss decide
-damageType = random.choice(["AD","MD"])
-shieldType = random.choice(["AP","MP"])
+bossType = random.choice(["ADAP", "ADMP", "MDAP", "MDMP"])
+damageType = bossType[:2]
+shieldType = bossType[2:]
+bossStats = [0,0,0,0]
 if damageType == "AD":
-    bossStats = [10,0,0,0]
+    bossStats[0] = 25
 else:
-    bossStats = [0,10,0,0]
+    bossStats[1] = 25
 if shieldType == "AP":
-    bossStats = [0,0,10,0]
+    bossStats[2] = 20
 else:
-    bossStats = [0,0,0,10]
+    bossStats[3] = 20
 
 # Leaderboard player cords
 leaderboardCords = [(200, 205), (200, 282.5), (200, 360), (200, 437.5), (200, 515), (200, 592.5), (200, 670), (200, 747.5)]
@@ -146,7 +152,7 @@ leaderboardCords = [(200, 205), (200, 282.5), (200, 360), (200, 437.5), (200, 51
 # The cords for where the higlight should be
 highlightCords = [(195, 200), (195, 277.5), (195, 355), (195, 432.5), (195, 510), (195, 587.5), (195, 665), (195, 742.5)]
 
-# Where shoudl the train ticket appear
+# Where should the train ticket appear
 ticketCords = [(769, 193), (769, 270.5), (769, 348), (769, 425.5), (769, 503), (769, 580.5), (769, 658), (769, 735.5)]
 
 # Players that are out of the game
@@ -154,53 +160,61 @@ skippedTurns = []
 
 #----- Start menu -----#
 
-try:
-    players = int(easygui.buttonbox("Choose player count", "Amount of players", str(2345678)))
-except TypeError:
-    done = True
-    pygame.quit()
+start = False
+while not start:
+    menuOptions = easygui.buttonbox("Hello there, what do you want to do?", "START MENU", ("Start Game", "Story", "Exit"))
+    if menuOptions == "Story":
+        story()
+    elif menuOptions == "Exit":
+        start = True
+        done = True
+    elif menuOptions == "Start Game":
+        start = True
+        try:
+            players = int(easygui.buttonbox("Choose player count", "AMOUNT OF PLAYERS", str(2345678)))
+        except TypeError:
+            done = True
+        else:
+            easygui.msgbox(f"Amount of players selected : {players}", "SELECTED PLAYER COUNT", "Lets go!")
+            done = False
+        playerlist = []
+        for i in range(players):
+            playerlist.append(str(i + 1))
 
-else:
-    msg = easygui.msgbox(f"Amount of players selected : {players}", "Selected player count", "Lets go!")
-    done = False
+        #----- Pygame initialisation -----#
 
-playerlist = []
-for i in range(players):
-    playerlist.append(str(i + 1))
+        # Initialise Pygame
+        pygame.init()
 
-#----- Pygame initialisation -----#
+        # Initialise Mixer
+        pygame.mixer.init()
 
-if not done:
-# Initialise Pygame
-    pygame.init()
+        # Screen size
+        WINDOW_SIZE = [1920,1080]
 
-    pygame.mixer.init()
+        # Load sounds
+        walkSound = pygame.mixer.Sound("Bijlagen\Walk.wav")
+        # goldSound = pygame.mixer.music.load("Bijlagen\SOUND.mp3")
 
-    # Screen size
-    WINDOW_SIZE = [1900,1000]
+        # Create screen
+        screen = pygame.display.set_mode(WINDOW_SIZE)
 
-    # Load sounds
-    walkSound = pygame.mixer.Sound("Bijlagen\Walk.wav")
-    # goldSound = pygame.mixer.music.load("Bijlagen\SOUND.mp3")
+        # Screen title
+        pygame.display.set_caption("THE CURSED TOWN - Gathering")
 
-    # Create screen
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-
-    # Screen title
-    pygame.display.set_caption("GAME NAME")
-
-    # Clock setup
-    clock = pygame.time.Clock()
+        # Clock setup
+        clock = pygame.time.Clock()
 
 
 #----- Main program ----#
 
 while not done:
     
-    if rounds < 15:
+    if rounds < 1:
 
     #--- Check activities (mouseclicks, button presses etc.) ---#
 
+        # Change board and colors depending on day/time
         if day:
             board = boardDay
             timeColor = 200,180,160
@@ -249,19 +263,20 @@ while not done:
                 updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
                 updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
                 pygame.display.flip()
-                specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, firstLap, chooseThrow, gambleSkip)
+                specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day, firstLap, chooseThrow, gambleSkip, legendaryAccess)
                 time.sleep(0.2)
 
             walking = False
             updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
-            specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist)
+            specialCheckPos(position, turn, shopSpace, shopE, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist)
 
             #----- Check if broke -----#
             
             updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
+            pygame.display.flip()
             for i in range(players): 
                 if gold[i] < 0 and str(i + 1) in playerlist:
                     skippedTurns.append(i)
@@ -290,14 +305,14 @@ while not done:
                         easygui.msgbox("Whats that light?", "Whats happening?", "Continue")
                     
             while gambleSkip[turn] or turn in skippedTurns:
+                gambleSkip[turn] = False
                 if turn < players - 1:
                     turn += 1
                 else:
                     turn = 0
-                gambleSkip[turn] = False
         
     else:
-        calculateDamage(players, inv, bossStats, health, bossHealth, damage, skippedTurns)
+        ending(players, inv, bossStats, health, bossHealth, damage, skippedTurns, screen, bossType, playerlist)
         for i in range(players):
             print(inv[i])
             done = True

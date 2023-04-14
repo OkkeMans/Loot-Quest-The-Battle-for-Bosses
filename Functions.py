@@ -63,12 +63,12 @@ def updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages
 
 
 # Check special space with walking
-def specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, firstLap, chooseThrow, gambleSkip):
+def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day, firstLap, chooseThrow, gambleSkip, legendaryAccess):
     
     if walkPos[turn] == 8: # check if at space 8
-        gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "The gambler", ["Yes", "No"])
+        gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "THE GAMBLER", ["Yes", "No"])
         if gambling:
-            message = random.randint(0,9)
+            message = random.randint(0,10)
             easygui.msgbox(gamblerOptions[message])
             if message == 0:
                 inv[turn][0] += 7
@@ -94,34 +94,55 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, first
                 chooseThrow[turn] = True
             elif message == 9:
                 gambleSkip[turn] = True
+            elif message == 10:
+                legendaryAccess[turn] = True
 
     elif walkPos[turn] == 16: # check if at space 16
-        buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "Standard shop", ["Yes", "No"])
-        if buyShop == "Yes":
-            options = random.sample(shop1, 3)
-            option1, = options[0].keys()
-            option2, = options[1].keys()
-            option3, = options[2].keys()
-            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "Standard shop", [option1, option2, option3])
-            for item in shop1:
-                if bought in item:
-                    itemValue = item[bought][0]
-                    itemValue = list(itemValue)
-                    break
-            for price in shop1:
-                if bought in price:
-                    itemPrice = price[bought][1]
-                    break
-            try:
-                if gold[turn] >= itemPrice:
-                        for i in range(len(itemValue)):
-                            inv[turn][i] += itemValue[i] 
-                        gold[turn] -= itemPrice
-                else:
-                    easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
-            except UnboundLocalError:
-                        easygui.msgbox("You left the shop withouth buying anything, how could you!? The shopkeeper demands 200 gold", "Left without buying?", "Continue")
-                        gold[turn] -= 200
+        if legendaryAccess[turn]:
+            buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "LEGENDARY SHOP", ["Yes", "No"])
+            if buyShop == "Yes":
+                options = random.sample(shopL, 3)
+                option1, = options[0].keys()
+                option2, = options[1].keys()
+                option3, = options[2].keys()
+                bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "LEGENDARY SHOP", [option1, option2, option3])
+                for item in shopL:
+                    if bought in item:
+                        itemValue = item[bought][0]
+                        itemValue = list(itemValue)
+                        break
+                for price in shopL:
+                    if bought in price:
+                        itemPrice = price[bought][1]
+                        break
+        
+        else:
+            buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "EPIC SHOP", ["Yes", "No"])
+            if buyShop == "Yes":
+                options = random.sample(shopE, 3)
+                option1, = options[0].keys()
+                option2, = options[1].keys()
+                option3, = options[2].keys()
+                bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "EPIC SHOP", [option1, option2, option3])
+                for item in shopE:
+                    if bought in item:
+                        itemValue = item[bought][0]
+                        itemValue = list(itemValue)
+                        break
+                for price in shopE:
+                    if bought in price:
+                        itemPrice = price[bought][1]
+                        break
+        try:
+            if gold[turn] >= itemPrice:
+                    for i in range(len(itemValue)):
+                        inv[turn][i] += itemValue[i] 
+                    gold[turn] -= itemPrice
+            else:
+                easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
+        except UnboundLocalError:
+                    easygui.msgbox("You left the shop withouth buying anything, how could you!? The shopkeeper demands 200 gold", "Left without buying?", "Continue")
+                    gold[turn] -= 200
 
     elif walkPos[turn] == 24: # check if at space 24
         if day:
@@ -134,26 +155,25 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shop1, gold, inv, day, first
             else:
                 easygui.msgbox("They tried to rob you but you were able to escape, you got lucky", "YOU GOT OUT!", "HIDE")
     
-    # elif walkPos[turn] == 32: # check if at space 32
     pygame.event.clear()
 
 # Check special space with final pos
-def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist,):
+def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist,):
     
     if position[turn] in shopSpace:
-        buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "Epic shop", ["Buy something", "Gather gold"])
+        buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "STANDARD SHOP", ["Buy something", "Gather gold"])
         if buyShop == "Buy something":
-            options = random.sample(shop2, 3)
+            options = random.sample(shopB, 3)
             option1, = options[0].keys()
             option2, = options[1].keys()
             option3, = options[2].keys()
-            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "Epic shop", [option1, option2, option3])
-            for item in shop2:
+            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "STANDARD SHOP", [option1, option2, option3])
+            for item in shopB:
                 if bought in item:
                     itemValue = item[bought][0]
                     itemValue = list(itemValue)
                     break
-            for price in shop2:
+            for price in shopB:
                 if bought in price:
                     itemPrice = price[bought][1]
                     break
@@ -169,18 +189,18 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
                         gold[turn] -= 200
 
         if buyShop == "Gather gold":
-            easygui.msgbox(f"You got 250 gold for helping at the shop", "Gold", "COLLECT GOLD")
+            easygui.msgbox(f"You got 250 gold for helping at the shop", "GOLD", "COLLECT GOLD")
             gold[turn] += 250
 
 
     if position[turn] in clueSpace:
         buyClue = easygui.ynbox(f"Do you want to buy a clue player {turn + 1}?", "Buy a clue?", ["Yes", "No"])
         if buyClue:
-            if gold[turn] >= 1000:
+            if gold[turn] >= 800:
                 message = clues[random.choice([damageType, shieldType])]
-                gold[turn] -= 1000
-                easygui.msgbox("Make sure nobody is looking!", "Your special clue", "Continue")
-                easygui.msgbox(message, "Your special clue", "Continue")
+                gold[turn] -= 800
+                easygui.msgbox("Make sure nobody is looking!", "YOUR SPECIAL CLUE", "Continue")
+                easygui.msgbox(message, "YOUR SPECIAL CLUE", "Continue")
             else:
                 easygui.msgbox("You dont have enough gold to buy a clue", "L", "Continue")
 
@@ -188,28 +208,28 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
     if position[turn] in stationSpace:
         if not firstLap:
             if not trainTicket[turn]:
-                buyTicket = easygui.ynbox(f"Do you want to buy a train ticket player {turn + 1}?", "Buy a ticket", ["Yes", "No"])
+                buyTicket = easygui.ynbox(f"Do you want to buy a train ticket player {turn + 1}?", "BUY A TICKET", ["Yes", "No"])
                 if buyTicket and gold[turn] >= 750:
                     gold[turn] -= 750
                     trainTicket[turn] = True
                 elif buyTicket and gold[turn] < 750:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
-                travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "Travel the world", ["Yes", "No"])
+                travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "TRAVEL THE WORLD", ["Yes", "No"])
                 if travel:
-                    travelLocation = easygui.buttonbox("Where do you want to travel?", "Travel location", list(locations))
+                    travelLocation = easygui.buttonbox("Where do you want to travel?", "TRAVEL LOCATION", list(locations))
                     walkPos[turn] = locations[travelLocation]
                     position[turn] = locations[travelLocation]
         else:
             if not trainTicket[turn]:
-                buyTicket = easygui.ynbox(f"The train has not arrived yet, do you want to buy a ticket player {turn + 1}?", "Buy a ticket", ["Yes", "No"])
-                if buyTicket and gold[turn] >= 750:
+                buyTicket = easygui.ynbox(f"The train has not arrived yet, do you want to buy a ticket player {turn + 1}?", "BUY A TICKET", ["Yes", "No"])
+                if buyTicket and gold[turn] >= 600:
                     gold[turn] -= 750
                     trainTicket[turn] = True
-                elif buyTicket and gold[turn] < 750:
+                elif buyTicket and gold[turn] < 600:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
-                easygui.msgbox("The train has not not arrived yet", "An empty station", "Continue")
+                easygui.msgbox("The train has not not arrived yet", "AN EMPTY STATION", "Continue")
     if position[turn] in goldSpace:
         easygui.msgbox("You found 600 gold!", "YOU FOUND GOLD!", "COLLECT GOLD")
         gold[turn] += 600
@@ -222,3 +242,6 @@ def specialCheckPos(position, turn, shopSpace, shop2, gold, inv, clueSpace, clue
         gold[int(switchplayer - 1)] = transfer1
 
     pygame.event.clear()
+
+def story():
+    easygui.msgbox("Story", "THE STORY OF THE CURSED TOWN", "Exit")
