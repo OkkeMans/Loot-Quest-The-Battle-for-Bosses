@@ -170,14 +170,14 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
 def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist,):
     
     if position[turn] in shopSpace:
-        buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "STANDARD SHOP", ["Buy something", "Gather gold"])
+        buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "BASIC SHOP", ["Buy something", "Gather gold"])
         if buyShop == "Buy something":
             # Pick 3 shop items to sell
             options = random.sample(shopB, 3)
             option1, = options[0].keys()
             option2, = options[1].keys()
             option3, = options[2].keys()
-            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "STANDARD SHOP", [option1, option2, option3])
+            bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "BASIC SHOP", [option1, option2, option3])
             # Finds item value
             for item in shopB:
                 if bought in item:
