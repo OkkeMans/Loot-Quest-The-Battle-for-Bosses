@@ -119,8 +119,8 @@ gold = [0,0,0,0,0,0,0,0]
 
 # Shop items
 shopB = [{"Basic sword": [(3,0,0,0), 250]}, {"Basic wand": [(0,3,0,0), 250]}, {"Basic armor": [(0,0,2,0), 200]}, {"Basic magic shield": [(0,0,0,2), 200]}]
-shopE = [{"Epic sword": [(7,0,0,0), 550]}, {"Epic wand": [(0,7,0,0), 600]}, {"Epic armor": [(0,0,5,0), 450]}, {"Epic magic shield": [(0,0,0,5), 450]}]
-shopL = [{"Legendary sword": [(13,0,0,0), 1000]}, {"Legendary wand": [(0,13,0,0), 1200]}, {"Legendary armor": [(0,0,9,0), 750]}, {"Legendary magic shield": [(0,0,0,9), 750]}]
+shopE = [{"Epic sword": [(7,0,0,0), 550]}, {"Epic wand": [(0,7,0,0), 550]}, {"Epic armor": [(0,0,5,0), 450]}, {"Epic magic shield": [(0,0,0,5), 450]}]
+shopL = [{"Legendary sword": [(13,0,0,0), 1000]}, {"Legendary wand": [(0,13,0,0), 1000]}, {"Legendary armor": [(0,0,9,0), 750]}, {"Legendary magic shield": [(0,0,0,9), 750]}]
 
 # Boss clues
 clues = {
