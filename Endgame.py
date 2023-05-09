@@ -2,7 +2,9 @@ import pygame, easygui, random, time
 from PIL import *
 
 #----- Functions -----#
-def ending(players, inv, bossStats, health, bossHealth, damage, skippedTurns, screen, bossType, playerlist):
+def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossType, playerlist):
+    # Amount of HP the boss has
+    bossHealth = (25 * players)
     while len(skippedTurns) != players:
         for i in range (players):
             if not i in skippedTurns:
@@ -28,18 +30,37 @@ def ending(players, inv, bossStats, health, bossHealth, damage, skippedTurns, sc
     pygame.display.set_caption("THE CURSED TOWN - Ending")
     screen.fill((255,255,255))
     boardADAP = pygame.image.load("Bijlagen\ADAP.jpg")
+    boardADAPW = pygame.image.load("Bijlagen\ADAPW.png")
+    boardADAPL = pygame.image.load("Bijlagen\ADAPL.png")
     boardADMP = pygame.image.load("Bijlagen\ADMP.jpg")
+    boardADMPW = pygame.image.load("Bijlagen\ADMPW.png")
+    boardADMPL = pygame.image.load("Bijlagen\ADMPL.png")
     boardMDAP = pygame.image.load("Bijlagen\MDAP.jpg")
+    boardMDAPW = pygame.image.load("Bijlagen\MDAPW.png")
+    boardMDAPL = pygame.image.load("Bijlagen\MDAPL.png")
     boardMDMP = pygame.image.load("Bijlagen\MDMP.jpg")
+    boardMDMPW = pygame.image.load("Bijlagen\MDMPW.png")
+    boardMDMPL = pygame.image.load("Bijlagen\MDMPL.png")    
+    
     if bossType == "ADAP":
         board = boardADAP
+        boardL = boardADAPL
+        boardW = boardADAPW
     elif bossType == "ADMP":
         board = boardADMP
+        boardL = boardADMPL
+        boardW = boardADMPW
     elif bossType == "MDAP":
         board = boardMDAP
+        boardL = boardMDAPL
+        boardW = boardMDAPW
     elif bossType == "MDMP":
         board = boardMDMP
+        boardL = boardMDMPL
+        boardW = boardMDMPW
     boardrect = board.get_rect()
+    boardLrect = boardL.get_rect()
+    boardWrect = boardW.get_rect()
     screen.blit(board, boardrect)
     pygame.display.flip()
     remainingPlayers = (', '.join(playerlist))
@@ -53,10 +74,17 @@ def ending(players, inv, bossStats, health, bossHealth, damage, skippedTurns, sc
         screen.fill((0,0,0))
         pygame.display.flip()
         time.sleep(0.1)
+    time.sleep(4)
 
     if bossKilled:
+        screen.blit(boardW, boardWrect)
+        pygame.display.flip()
+        time.sleep(3)
         easygui.msgbox("You have managed to defeat the boss! Congratulations!!", "THE BOSS IS DEAD", "Continue")
     else:
+        screen.blit(boardL, boardLrect)
+        pygame.display.flip()
+        time.sleep(2)
         easygui.msgbox("Unfortunately we lost all of our players before and in the fight against the boss", "THE BOSS SURVIVED", "Continue")
     
     easygui.msgbox("But who dealt the most damage to the boss and won the game?", "WHO WINS?", "Continue")

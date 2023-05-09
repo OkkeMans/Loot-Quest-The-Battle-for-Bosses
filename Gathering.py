@@ -82,9 +82,6 @@ inv = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,
 # Amount of HP per player
 health = [20,20,20,20,20,20,20,20]
 
-# Amount of HP the boss has
-bossHealth = 200
-
 # Amount of damage the player does to the boss
 damage = [0,0,0,0,0,0,0,0]
 
@@ -138,13 +135,13 @@ damageType = bossType[:2]
 shieldType = bossType[2:]
 bossStats = [0,0,0,0]
 if damageType == "AD":
-    bossStats[0] = 25
+    bossStats[0] = 20
 else:
-    bossStats[1] = 25
+    bossStats[1] = 20
 if shieldType == "AP":
-    bossStats[2] = 20
+    bossStats[2] = 15
 else:
-    bossStats[3] = 20
+    bossStats[3] = 15
 
 # Leaderboard player cords
 leaderboardCords = [(200, 205), (200, 282.5), (200, 360), (200, 437.5), (200, 515), (200, 592.5), (200, 670), (200, 747.5)]
@@ -210,7 +207,7 @@ while not start:
 
 while not done:
     
-    if rounds < 1:
+    if rounds < 15:
 
     #--- Check activities (mouseclicks, button presses etc.) ---#
 
@@ -312,7 +309,7 @@ while not done:
                     turn = 0
         
     else:
-        ending(players, inv, bossStats, health, bossHealth, damage, skippedTurns, screen, bossType, playerlist)
+        ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossType, playerlist)
         for i in range(players):
             print(inv[i])
             done = True
