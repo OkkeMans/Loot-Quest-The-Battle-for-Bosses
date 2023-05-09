@@ -6,8 +6,8 @@ from PIL import *
 # Refresh text on screen
 def updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage):
     
+    # Set board
     screen.fill(timeColor)
-
     boardrect = board.get_rect()
     screen.blit(board, boardrect)
 
@@ -19,11 +19,13 @@ def updateText(screen, timeColor, board, throw, textColor, highlightColor, highl
     label = font.render(text,True,(textColor))
     screen.blit(label,(1000,20))
     
+    # Highlight current player
     highlight = pygame.Surface((612,55))
     highlight.set_alpha(30)
     highlight.fill((highlightColor))
     screen.blit(highlight, ((highlightCords[turn])))
     
+    # Show playerlist (Inventory + Gold)
     for i in range(players):
         text = (f"Player {i + 1} {inv[i]} {gold[i]}")
         label = font.render(text,True,(textColor))
@@ -34,6 +36,7 @@ def updateText(screen, timeColor, board, throw, textColor, highlightColor, highl
 # Refresh player positions
 def updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages):
     
+    # Calculate player offset
     for i in range(players):
         if walkPos[i] in [0, 8, 16, 24]:
             extraX, extraY = baseExtra[i]
@@ -68,34 +71,25 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
     if walkPos[turn] == 8: # check if at space 8
         gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "THE GAMBLER", ["Yes", "No"])
         if gambling:
-            message = random.randint(0,10)
-            easygui.msgbox(gamblerOptions[message])
-            if message == 0:
-                inv[turn][0] += 7
-            elif message == 1:
-                inv[turn][1] += 7
-            elif message == 2:
-                inv[turn][2] += 5
-            elif message == 3:
-                inv[turn][3] += 5
-            elif message == 4:
-                gold[turn] += 500
-            elif message == 5:
-                gold[turn] -= 500
-            elif message == 6:
-                temp = inv[turn][0]
-                inv[turn][0] = inv[turn][1]
-                inv[turn][1] = temp
-            elif message == 7:
-                temp = inv[turn][2]
-                inv[turn][2] = inv[turn][3]
-                inv[turn][3] = temp
-            elif message == 8:
-                chooseThrow[turn] = True
-            elif message == 9:
-                gambleSkip[turn] = True
-            elif message == 10:
-                legendaryAccess[turn] = True
+        # Define a dictionary mapping messages to actions
+            actions = {
+                0: lambda: inv[turn].__setitem__(0, inv[turn][0] + 7),
+                1: lambda: inv[turn].__setitem__(1, inv[turn][1] + 7),
+                2: lambda: inv[turn].__setitem__(2, inv[turn][2] + 5),
+                3: lambda: inv[turn].__setitem__(3, inv[turn][3] + 5),
+                4: lambda: gold.__setitem__(turn, gold[turn] + 500),
+                5: lambda: gold.__setitem__(turn, gold[turn] - 500),
+                6: lambda: (inv[turn].__setitem__(0, inv[turn][1]), inv[turn].__setitem__(1, inv[turn][0])),
+                7: lambda: (inv[turn].__setitem__(2, inv[turn][3]), inv[turn].__setitem__(3, inv[turn][2])),
+                8: lambda: chooseThrow.__setitem__(turn, True),
+                9: lambda: gambleSkip.__setitem__(turn, True),
+                10: lambda: legendaryAccess.__setitem__(turn, True),
+            }
+
+            # Generate a random message and execute its corresponding action
+            gamble = random.randint(0,10)
+            easygui.msgbox(gamblerOptions[gamble])
+            actions[gamble]()
 
     elif walkPos[turn] == 16: # check if at space 16
         if legendaryAccess[turn]:
@@ -115,7 +109,16 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
                     if bought in price:
                         itemPrice = price[bought][1]
                         break
-        
+                try:
+                    if gold[turn] >= itemPrice:
+                            for i in range(len(itemValue)):
+                                inv[turn][i] += itemValue[i] 
+                            gold[turn] -= itemPrice
+                    else:
+                        easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
+                except UnboundLocalError:
+                    pass
+
         else:
             buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "EPIC SHOP", ["Yes", "No"])
             if buyShop == "Yes":
@@ -133,16 +136,16 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
                     if bought in price:
                         itemPrice = price[bought][1]
                         break
-        try:
-            if gold[turn] >= itemPrice:
-                    for i in range(len(itemValue)):
-                        inv[turn][i] += itemValue[i] 
-                    gold[turn] -= itemPrice
-            else:
-                easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
-        except UnboundLocalError:
-                    easygui.msgbox("You left the shop withouth buying anything, how could you!? The shopkeeper demands 200 gold", "Left without buying?", "Continue")
-                    gold[turn] -= 200
+                try:
+                    if gold[turn] >= itemPrice:
+                            for i in range(len(itemValue)):
+                                inv[turn][i] += itemValue[i] 
+                            gold[turn] -= itemPrice
+                    else:
+                        easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
+                except UnboundLocalError:
+                            easygui.msgbox("You left the shop withouth buying anything, how could you!? The shopkeeper demands 200 gold", "Left without buying?", "Continue")
+                            gold[turn] -= 200
 
     elif walkPos[turn] == 24: # check if at space 24
         if day:

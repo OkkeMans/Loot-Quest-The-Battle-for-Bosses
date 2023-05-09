@@ -70,6 +70,7 @@ character7 = pygame.image.load("Bijlagen\Character7.png")
 character8 = pygame.image.load("Bijlagen\Character8.png")
 characterImages = [character1, character2, character3, character4, character5, character6, character7, character8]
 
+# Ticket images
 ticketImage = pygame.image.load("Bijlagen\Ticket.png")
 ticketImage = pygame.transform.scale(ticketImage,(35,35))
 
@@ -129,7 +130,7 @@ clues = {
     "MP": "The boss has Magic Protection"
 }
 
-# Boss decide
+# Boss type decide
 bossType = random.choice(["ADAP", "ADMP", "MDAP", "MDMP"])
 damageType = bossType[:2]
 shieldType = bossType[2:]
@@ -167,6 +168,7 @@ while not start:
         done = True
     elif menuOptions == "Start Game":
         start = True
+        # Chooses amount of players
         try:
             players = int(easygui.buttonbox("Choose player count", "AMOUNT OF PLAYERS", str(2345678)))
         except TypeError:
@@ -174,6 +176,7 @@ while not start:
         else:
             easygui.msgbox(f"Amount of players selected : {players}", "SELECTED PLAYER COUNT", "Lets go!")
             done = False
+        # Creates list with players
         playerlist = []
         for i in range(players):
             playerlist.append(str(i + 1))
@@ -224,22 +227,26 @@ while not done:
             textColor = 200,175,150
             highlightColor = 255,255,255
             
+        # Check keypresses
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
             elif event.type == pygame.KEYDOWN:
-                # Execute keypress
                 if event.key == pygame.K_SPACE:
                     if not chooseThrow[turn]:
                         throw = random.randint(1,6) + random.randint(1,6)
                     else:
                         throw = easygui.integerbox("Choose what you want your next throw to be", "CHOOSE YOUR THROW", None, 1, 12)
+                        if throw == None:
+                            throw = random.randint(1,12)
                     walking = True
                     position[turn] += throw
+                    chooseThrow[turn] = False
 
                     if position[turn] > 31:
                         position[turn] -= 32     
 
+                # Show players stats
                 elif event.key == pygame.K_e:
                     easygui.msgbox(f"You have {str(inv[turn][0])} attack damge, {str(inv[turn][1])} magic damage, {str(inv[turn][2])} armor and {str(inv[turn][3])} magic protection.", "Stats", "BACK TO BOARD")
                     pygame.event.clear()
@@ -251,6 +258,7 @@ while not done:
             updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
         else:
+            # Move player 1 square for each step
             for i in range(throw):
                 walkPos[turn] += 1
                 if walkPos[turn] > 31:
@@ -286,6 +294,7 @@ while not done:
             updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
+            
             # Switch turns
             if turn < players - 1:
                 turn += 1
@@ -307,7 +316,8 @@ while not done:
                     turn += 1
                 else:
                     turn = 0
-        
+
+    # Start ending    
     else:
         ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossType, playerlist)
         for i in range(players):
