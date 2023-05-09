@@ -3,8 +3,9 @@ from PIL import *
 
 #----- Functions -----#
 def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossType, playerlist):
-    # Amount of HP the boss has
+    # Calculate boss health
     bossHealth = (25 * players)
+    # Check if players are still alive
     while len(skippedTurns) != players:
         for i in range (players):
             if not i in skippedTurns:
@@ -27,6 +28,7 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
     for i in skippedTurns:
         skippedTurns[i] += 1
 
+    # Set caption and right boss background
     pygame.display.set_caption("THE CURSED TOWN - Ending")
     screen.fill((255,255,255))
     boardADAP = pygame.image.load("Bijlagen\ADAP.jpg")
@@ -63,9 +65,12 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
     boardWrect = boardW.get_rect()
     screen.blit(board, boardrect)
     pygame.display.flip()
+    
+    # Create lists of lost and remaining players
     remainingPlayers = (', '.join(playerlist))
     lostPlayers = map(str, skippedTurns)
     lostPlayers = (', '.join(lostPlayers))
+    
     easygui.msgbox(f"It's time to fight the boss, only players {remainingPlayers} are remaining. Lets see if they are able to kill the boss", "TIME TO FIGHT", "Continue")
     for i in range (8):
         screen.fill((255,255,255))
@@ -74,12 +79,13 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
         screen.fill((0,0,0))
         pygame.display.flip()
         time.sleep(0.1)
-    time.sleep(4)
+    time.sleep(3)
 
+    # Ending text
     if bossKilled:
         screen.blit(boardW, boardWrect)
         pygame.display.flip()
-        time.sleep(3)
+        time.sleep(2)
         easygui.msgbox("You have managed to defeat the boss! Congratulations!!", "THE BOSS IS DEAD", "Continue")
     else:
         screen.blit(boardL, boardLrect)
@@ -95,13 +101,14 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
     
     easygui.msgbox("The player that dealt the most damage to the boss,", "*drumroll*", "Continue")
     easygui.msgbox("is,", "*drumroll*", "Continue")
+    # Check if multiple people "won"
     if len(winners) > 1:
-        winnersStr = (', '.join(winners))
+        winners = (', '.join(winners))
         easygui.msgbox(f"oh, wait. 2 or more players dealt the exact same amount of damage to the boss!?", "A TIE!?", "Continue")
         if max(damage) == 0:
             easygui.msgbox(f"Even worse, no one did any damage to the boss! Everyone died withouth doing anything", "lmao bozo's", "End game")
         else:
-            easygui.msgbox(f"These players have dealt the same amount of damage to the boss, and won the game together! \n{winnersStr}", "A TIE!?", "End game")
+            easygui.msgbox(f"These players have dealt the same amount of damage to the boss, and won the game together! \n{winners}", "A TIE!?", "End game")
     else:
         winners = (', '.join(winners))
-        easygui.msgbox(f"PLAYER {winners} HAS DEALT THE MOST DAMAGE AGAINST THE BOSS AND HAS WON THE GAME", f"PLAYER {winnersStr} WINS!", "End game")
+        easygui.msgbox(f"PLAYER {winners} HAS DEALT THE MOST DAMAGE AGAINST THE BOSS AND HAS WON THE GAME", f"PLAYER {winners} WINS!", "End game")

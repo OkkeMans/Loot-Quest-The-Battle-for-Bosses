@@ -71,7 +71,7 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
     if walkPos[turn] == 8: # check if at space 8
         gambling = easygui.ynbox("Welcome to the gambler, do you want to play a game?", "THE GAMBLER", ["Yes", "No"])
         if gambling:
-        # Define a dictionary mapping messages to actions
+        # Define a dictionary mapping gambles to actions
             actions = {
                 0: lambda: inv[turn].__setitem__(0, inv[turn][0] + 7),
                 1: lambda: inv[turn].__setitem__(1, inv[turn][1] + 7),
@@ -95,16 +95,19 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
         if legendaryAccess[turn]:
             buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "LEGENDARY SHOP", ["Yes", "No"])
             if buyShop == "Yes":
+                # Pick 3 shop items to sell
                 options = random.sample(shopL, 3)
                 option1, = options[0].keys()
                 option2, = options[1].keys()
                 option3, = options[2].keys()
                 bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "LEGENDARY SHOP", [option1, option2, option3])
+                # Finds item value
                 for item in shopL:
                     if bought in item:
                         itemValue = item[bought][0]
                         itemValue = list(itemValue)
                         break
+                # Finds item price
                 for price in shopL:
                     if bought in price:
                         itemPrice = price[bought][1]
@@ -122,16 +125,19 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
         else:
             buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "EPIC SHOP", ["Yes", "No"])
             if buyShop == "Yes":
+                # Pick 3 shop items to sell
                 options = random.sample(shopE, 3)
                 option1, = options[0].keys()
                 option2, = options[1].keys()
                 option3, = options[2].keys()
                 bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "EPIC SHOP", [option1, option2, option3])
+                # Finds item value
                 for item in shopE:
                     if bought in item:
                         itemValue = item[bought][0]
                         itemValue = list(itemValue)
                         break
+                # Finds item price
                 for price in shopE:
                     if bought in price:
                         itemPrice = price[bought][1]
@@ -166,16 +172,19 @@ def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clue
     if position[turn] in shopSpace:
         buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "STANDARD SHOP", ["Buy something", "Gather gold"])
         if buyShop == "Buy something":
+            # Pick 3 shop items to sell
             options = random.sample(shopB, 3)
             option1, = options[0].keys()
             option2, = options[1].keys()
             option3, = options[2].keys()
             bought = easygui.buttonbox(f"Welcome to the shop! \nWhat do you want to buy? player {turn + 1}?", "STANDARD SHOP", [option1, option2, option3])
+            # Finds item value
             for item in shopB:
                 if bought in item:
                     itemValue = item[bought][0]
                     itemValue = list(itemValue)
                     break
+            # Finds item price
             for price in shopB:
                 if bought in price:
                     itemPrice = price[bought][1]
@@ -247,4 +256,4 @@ def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clue
     pygame.event.clear()
 
 def story():
-    easygui.msgbox("Story", "THE STORY OF THE CURSED TOWN", "Exit")
+    easygui.msgbox("If you see this, i forgot to make up a story", "THE STORY OF THE CURSED TOWN", "Exit")
