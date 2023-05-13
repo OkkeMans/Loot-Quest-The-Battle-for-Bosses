@@ -194,13 +194,13 @@ while not start:
 
         # Load sounds
         walkSound = pygame.mixer.Sound("Bijlagen\Walk.wav")
-        # goldSound = pygame.mixer.music.load("Bijlagen\SOUND.mp3")
+        goldSound = pygame.mixer.Sound("Bijlagen\Gold.wav")
 
         # Create screen
         screen = pygame.display.set_mode(WINDOW_SIZE)
 
         # Screen title
-        pygame.display.set_caption("THE CURSED TOWN - Gathering")
+        pygame.display.set_caption("Loot Quest: The Battle for Bosses - Gathering")
 
         # Clock setup
         clock = pygame.time.Clock()
@@ -275,7 +275,7 @@ while not done:
             updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
-            specialCheckPos(position, turn, shopSpace, shopE, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist)
+            specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, goldSound, swapSpace, playerlist)
 
             #----- Check if broke -----#
             

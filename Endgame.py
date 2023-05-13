@@ -6,7 +6,7 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
     # Calculate boss health
     bossHealth = (25 * players)
     # Check if players are still alive
-    while len(skippedTurns) != players:
+    while len(skippedTurns) != players and bossHealth > 0:
         for i in range (players):
             if not i in skippedTurns:
                 playerDamage = max((inv[i][0] - bossStats[2]) + (inv[i][1] - bossStats[3]), 0)
@@ -29,7 +29,7 @@ def ending(players, inv, bossStats, health, damage, skippedTurns, screen, bossTy
         skippedTurns[i] += 1
 
     # Set caption and right boss background
-    pygame.display.set_caption("THE CURSED TOWN - Ending")
+    pygame.display.set_caption("Loot Quest: The Battle for Bosses - Ending")
     screen.fill((255,255,255))
     boardADAP = pygame.image.load("Bijlagen\ADAP.jpg")
     boardADAPW = pygame.image.load("Bijlagen\ADAPW.png")

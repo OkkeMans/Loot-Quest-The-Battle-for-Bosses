@@ -93,6 +93,7 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
 
     elif walkPos[turn] == 16: # check if at space 16
         if legendaryAccess[turn]:
+            legendaryAccess[turn] = False
             buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something player {turn + 1}?", "LEGENDARY SHOP", ["Yes", "No"])
             if buyShop == "Yes":
                 # Pick 3 shop items to sell
@@ -167,7 +168,7 @@ def specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day
     pygame.event.clear()
 
 # Check special space with final pos
-def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, swapSpace, playerlist,):
+def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, goldSound, swapSpace, playerlist):
     
     if position[turn] in shopSpace:
         buyShop = easygui.buttonbox(f"Welcome to the shop! \nDo you want to buy something or gather some gold player {turn + 1}?", "BASIC SHOP", ["Buy something", "Gather gold"])
@@ -221,10 +222,10 @@ def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clue
         if not firstLap:
             if not trainTicket[turn]:
                 buyTicket = easygui.ynbox(f"Do you want to buy a train ticket player {turn + 1}?", "BUY A TICKET", ["Yes", "No"])
-                if buyTicket and gold[turn] >= 750:
-                    gold[turn] -= 750
+                if buyTicket and gold[turn] >= 600:
+                    gold[turn] -= 600
                     trainTicket[turn] = True
-                elif buyTicket and gold[turn] < 750:
+                elif buyTicket and gold[turn] < 600:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
                 travel = easygui.ynbox(f"Do you want to travel to another station player {turn + 1}?", "TRAVEL THE WORLD", ["Yes", "No"])
@@ -236,13 +237,14 @@ def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clue
             if not trainTicket[turn]:
                 buyTicket = easygui.ynbox(f"The train has not arrived yet, do you want to buy a ticket player {turn + 1}?", "BUY A TICKET", ["Yes", "No"])
                 if buyTicket and gold[turn] >= 600:
-                    gold[turn] -= 750
+                    gold[turn] -= 600
                     trainTicket[turn] = True
                 elif buyTicket and gold[turn] < 600:
                     easygui.msgbox("You dont have enough gold to buy this item right now.", "L", "Continue")
             else:
                 easygui.msgbox("The train has not not arrived yet", "AN EMPTY STATION", "Continue")
     if position[turn] in goldSpace:
+        pygame.mixer.Sound.play(goldSound)
         easygui.msgbox("You found 600 gold!", "YOU FOUND GOLD!", "COLLECT GOLD")
         gold[turn] += 600
 
@@ -256,4 +258,4 @@ def specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clue
     pygame.event.clear()
 
 def story():
-    easygui.msgbox("If you see this, i forgot to make up a story", "THE STORY OF THE CURSED TOWN", "Exit")
+    easygui.msgbox("I didn't feel like making up a whole story for a game. \nThis button doesn't really do much...", "THE STORY OF LOOT QUEST: THE BATTLE FOR BOSSES", "Exit")
