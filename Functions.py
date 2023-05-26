@@ -4,7 +4,7 @@ from PIL import *
 #----- Functions -----#
 
 # Refresh text on screen
-def updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage):
+def updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage):
     
     # Set board
     screen.fill(timeColor)
@@ -18,6 +18,11 @@ def updateText(screen, timeColor, board, throw, textColor, highlightColor, highl
     text = (f"Last throw: {throw}")
     label = font.render(text,True,(textColor))
     screen.blit(label,(1000,20))
+
+    # Show current round
+    text = (f"Round: {rounds + 1}")
+    label = font.render(text,True,(textColor))
+    screen.blit(label,(1000,80))
     
     # Highlight current player
     highlight = pygame.Surface((612,55))

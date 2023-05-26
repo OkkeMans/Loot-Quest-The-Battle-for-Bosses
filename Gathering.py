@@ -255,7 +255,7 @@ while not done:
         #--- Draw/update graphics ---#
 
         if not walking:
-            updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+            updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
         else:
             # Move player 1 square for each step
@@ -265,21 +265,21 @@ while not done:
                     walkPos[turn] -= 32
                     firstLap = False 
                 pygame.mixer.Sound.play(walkSound)  
-                updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+                updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
                 updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
                 pygame.display.flip()
                 specialCheckWalk(walkPos, turn, gamblerOptions, shopE, shopL, gold, inv, day, firstLap, chooseThrow, gambleSkip, legendaryAccess)
                 time.sleep(0.2)
 
             walking = False
-            updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+            updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
             specialCheckPos(position, turn, shopSpace, shopB, gold, inv, clueSpace, clues, damageType, shieldType, stationSpace, trainTicket, firstLap, locations, walkPos, goldSpace, goldSound, swapSpace, playerlist)
 
             #----- Check if broke -----#
             
-            updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+            updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
             for i in range(players): 
@@ -291,7 +291,7 @@ while not done:
                         easygui.msgbox(f"Oh, there is only one player remaining. I guess you win? \nPLAYER {playerlist[0]} YOU WON!", f"PLAYER {playerlist[0]} WON", "CONGRATULATIONS")
                         done = True
             
-            updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+            updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
             updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
             pygame.display.flip()
             
@@ -325,7 +325,7 @@ while not done:
             done = True
 
     # Refresh screen
-    updateText(screen, timeColor, board, throw, textColor, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
+    updateText(screen, timeColor, board, throw, textColor, rounds, highlightColor, highlightCords, turn, players, inv, gold, leaderboardCords, trainTicket, ticketCords, ticketImage)
     updatePositions(players, walkPos, baseExtra, spaces, screen, characterImages)
     clock.tick(60)
     pygame.display.flip()
